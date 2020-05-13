@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Authors>PapaBytes</Authors>
+        <PackageProjectUrl>https://github.com/papabytes/core-ark</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/papabytes/core-ark</RepositoryUrl>
+        <PackageLicenseUrl>https://github.com/papabytes/core-ark/blob/master/LICENSE</PackageLicenseUrl>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="9.0.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CoreArk.Packages.Common\CoreArk.Packages.Common.csproj" />
+      <ProjectReference Include="..\CoreArk.Packages.Core\CoreArk.Packages.Core.csproj" />
+      <ProjectReference Include="..\CoreArk.Packages.Exceptions\CoreArk.Packages.Exceptions.csproj" />
+      <ProjectReference Include="..\CoreArk.Packages.Models\CoreArk.Packages.Models.csproj" />
+    </ItemGroup>
+
+</Project>

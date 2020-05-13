@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>CoreArk.Packages.Common</Title>
+        <Description>Base package for my projects</Description>
+        <Authors>PapaBytes</Authors>
+        <PackageProjectUrl>https://github.com/papabytes/core-ark</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/papabytes/core-ark</RepositoryUrl>
+        <PackageLicenseUrl>https://github.com/papabytes/core-ark/blob/master/LICENSE</PackageLicenseUrl>
+    </PropertyGroup>
+
+</Project>
