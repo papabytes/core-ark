@@ -10,13 +10,17 @@ namespace CoreArk.Packages.Core
 {
     public class DataContext : DbContext
     {
-        public DataContext(DbContextOptions<DataContext> options) : base(options)
+        private readonly IConfigurationAssemblyResolver _configurationAssemblyResolver;
+
+        public DataContext(DbContextOptions<DataContext> options,
+            IConfigurationAssemblyResolver configurationAssemblyResolver) : base(options)
         {
+            _configurationAssemblyResolver = configurationAssemblyResolver;
         }
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.Load("Papabytes.Core.ShiftMeister.Entity.Configuration"));
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.Load(_configurationAssemblyResolver.GetConfigurationAssembly()));
         }
 
 
@@ -27,8 +31,7 @@ namespace CoreArk.Packages.Core
                 .Where(t => t.State == EntityState.Added)
                 .Select(t => t.Entity);
 
-            
-            
+
             foreach (var entity in added)
             {
                 if (entity is IAuditableEntity auditableEntity)
@@ -40,12 +43,11 @@ namespace CoreArk.Packages.Core
                 {
                     entityWithId.Id = Guid.NewGuid();
                 }
-                
+
                 if (entity is IEntityWithNormalizedName entityWithNormalizedName)
                 {
                     entityWithNormalizedName.NormalizedName = entityWithNormalizedName.Name.ToUpperInvariant();
                 }
-        
             }
 
             var modified = ChangeTracker.Entries()
@@ -58,12 +60,13 @@ namespace CoreArk.Packages.Core
                 {
                     auditableEntity.UpdatedAt = DateTime.Now;
                 }
-                
+
                 if (entity is IEntityWithNormalizedName entityWithNormalizedName)
                 {
                     entityWithNormalizedName.NormalizedName = entityWithNormalizedName.Name.ToUpperInvariant();
                 }
             }
+
             return base.SaveChangesAsync(cancellationToken);
         }
     }
