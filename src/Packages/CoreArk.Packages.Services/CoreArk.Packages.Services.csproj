@@ -7,6 +7,7 @@
         <PackageProjectUrl>https://github.com/papabytes/core-ark</PackageProjectUrl>
         <RepositoryUrl>https://github.com/papabytes/core-ark</RepositoryUrl>
         <PackageLicenseUrl>https://github.com/papabytes/core-ark/blob/master/LICENSE</PackageLicenseUrl>
+        <PackageVersion>1.0.1</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>

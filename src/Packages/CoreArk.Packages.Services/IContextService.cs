@@ -9,5 +9,9 @@ namespace CoreArk.Packages.Services
         UserRole? UserRole { get; }
         
         Guid? CompanyId { get; }
+        
+        string Email { get; }
+        
+        string Name { get; }
     }
 }

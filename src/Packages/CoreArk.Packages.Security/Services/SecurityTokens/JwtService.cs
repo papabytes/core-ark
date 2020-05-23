@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using CoreArk.Packages.Security.Configurations;
@@ -19,7 +20,7 @@ namespace CoreArk.Packages.Security.Services.SecurityTokens
             _securityOptions = securityOptions.Value;
         }
 
-        public string GetJwt(string subjectId, string role, string companyId)
+        public string GetJwt(string subjectId, string role, string companyId, string firstName, string lastName, string email)
         {
             var jwtHandler = new JwtSecurityTokenHandler();
 
@@ -27,7 +28,10 @@ namespace CoreArk.Packages.Security.Services.SecurityTokens
             {
                 new Claim("sub", subjectId),
                 new Claim(ClaimTypes.Role, role),
-                new Claim("company", companyId)
+                new Claim("company", companyId),
+                new Claim(ClaimTypes.GivenName, firstName),
+                new Claim(ClaimTypes.Surname, lastName),
+                new Claim(ClaimTypes.Email, email)
             };
 
             var jwt = new JwtSecurityToken(
@@ -42,6 +46,24 @@ namespace CoreArk.Packages.Security.Services.SecurityTokens
             );
             
             return jwtHandler.WriteToken(jwt);
+        }
+
+        public ClaimsPrincipal GetIdentity(string encodedJwt)
+        {
+            var token = new JwtSecurityToken(encodedJwt);
+
+            var firstName = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value;
+            var lastName = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Surname)?.Value;
+            
+            var identity = new ClaimsIdentity(new[]
+            {
+                new Claim(ClaimTypes.Name, $"{firstName} {lastName}"),
+                new Claim(ClaimTypes.Email, token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value),
+                new Claim(ClaimTypes.Actor, token.Claims.FirstOrDefault(c => c.Type == "sub")?.Value),
+                new Claim(ClaimTypes.Role, token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value)
+            }, "Oauth");
+            
+            return new ClaimsPrincipal(identity);
         }
     }
 }
