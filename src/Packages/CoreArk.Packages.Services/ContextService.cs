@@ -65,5 +65,29 @@ namespace CoreArk.Packages.Services
                 return null;
             }
         }
+        
+        public string Name
+        {
+            get
+            {
+                var firstName =
+                    _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value;
+                
+                var lastName =
+                    _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Surname)?.Value;
+
+                return $"{firstName} {lastName}";
+            }
+        }
+        
+        public string Email
+        {
+            get
+            {
+                return _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            }
+        }
+        
+        
     }
 }
