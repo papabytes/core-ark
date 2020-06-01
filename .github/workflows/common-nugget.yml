@@ -1,9 +1,7 @@
-name: .Core Nugget
+name: .Common Nugget
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
     branches: [ master ]
 
 jobs:
@@ -21,8 +19,8 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
-    - name: Pack Core
-      run: dotnet pack src/Packages/CoreArk.Packages.Core/CoreArk.Packages.Core.csproj --output nuget-packages --configuration Release
-    - name: Push Core
+    - name: Pack Common
+      run: dotnet pack src/Packages/CoreArk.Packages.Common/CoreArk.Packages.Common.csproj --output nuget-packages --configuration Release
+    - name: Push Common
       run: dotnet nuget push nuget-packages/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
 
