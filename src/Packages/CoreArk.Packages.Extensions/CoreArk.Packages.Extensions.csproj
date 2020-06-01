@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>Common Extensions</Title>
+        <PackageProjectUrl>https://github.com/papabytes/core-ark</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/papabytes/core-ark</RepositoryUrl>
+        <PackageLicenseUrl>https://github.com/papabytes/core-ark/blob/master/LICENSE</PackageLicenseUrl>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CoreArk.Packages.Core\CoreArk.Packages.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="System.Json" Version="4.7.1" />
+    </ItemGroup>
+
+</Project>

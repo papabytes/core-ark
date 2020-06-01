@@ -58,9 +58,9 @@ namespace CoreArk.Packages.Security.Services.SecurityTokens
             var identity = new ClaimsIdentity(new[]
             {
                 new Claim(ClaimTypes.Name, $"{firstName} {lastName}"),
-                new Claim(ClaimTypes.Email, token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value),
-                new Claim(ClaimTypes.Actor, token.Claims.FirstOrDefault(c => c.Type == "sub")?.Value),
-                new Claim(ClaimTypes.Role, token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value)
+                new Claim(ClaimTypes.Email, token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? string.Empty),
+                new Claim(ClaimTypes.Actor, token.Claims.FirstOrDefault(c => c.Type == "sub")?.Value ?? string.Empty),
+                new Claim(ClaimTypes.Role, token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value ?? string.Empty)
             }, "Oauth");
             
             return new ClaimsPrincipal(identity);
