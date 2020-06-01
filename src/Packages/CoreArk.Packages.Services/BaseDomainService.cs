@@ -4,7 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoMapper;
-using CoreArk.Packages.Common.Enums;
 using CoreArk.Packages.Core.Interfaces;
 using CoreArk.Packages.Exceptions;
 using CoreArk.Packages.Models;
@@ -50,7 +49,10 @@ namespace CoreArk.Packages.Services
 
         public virtual async Task<bool> DeleteById(Guid id)
         {
-            var toDelete = await DbContext.Set<TEntity>().FindAsync(id);
+            var query = DbContext.Set<TEntity>().AsQueryable();
+            query = FilterQuery(query);
+            var toDelete = await query.FirstOrDefaultAsync(e => e.Id == id);
+            await ValidateDeleteSet(query);
             DbContext.Set<TEntity>().Remove(toDelete);
             var result = await DbContext.SaveChangesAsync();
             return result > 0;
@@ -60,29 +62,58 @@ namespace CoreArk.Packages.Services
             where TResponse : class
         {
             var result = DbContext.Set<TEntity>().Where(e => e.Id == id);
+
+            result = FilterQuery(result);
+
             if (clause != null)
             {
                 result = result.Where(clause);
             }
+
+            result = AddByIdIncludes(result);
 
             _ = result ?? throw new NotFoundException(nameof(TEntity), id);
             return Mapper.Map<TResponse>(await result.FirstOrDefaultAsync());
         }
 
         public virtual async Task<IEnumerable<TResponse>> GetAll<TResponse>(
-            Expression<Func<TEntity, bool>> clause = null)
+            Expression<Func<TEntity, bool>> clause = null, string search = null)
             where TResponse : class
         {
             var query = DbContext.Set<TEntity>().AsNoTracking().AsQueryable();
             query = clause != null ? query.Where(clause) : query;
 
-            query = GetQueryContext(query);
+            query = FilterQuery(query);
+            query = AddIncludes(query);
+            query = AddSearch(query, search);
 
             var result = await query.ToListAsync();
 
             return Mapper.Map<IEnumerable<TResponse>>(result);
         }
 
+        public virtual async Task<PaginatedResult<TResponse>> GetPaginated<TResponse>(int page = 1, int pageSize = 50,
+            Expression<Func<TEntity, bool>> clause = null, string search = null) where TResponse : class
+        {
+            var query = DbContext.Set<TEntity>().AsNoTracking();
+            query = clause != null ? query.Where(clause) : query;
+
+            query = FilterQuery(query);
+            query = AddIncludes(query);
+            query = AddSearch(query, search);
+
+            var totalCount = query.Count();
+            var pageCount = (int) Math.Ceiling((decimal) totalCount / (decimal) pageSize);
+            var data = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            return new PaginatedResult<TResponse>
+            {
+                Data = Mapper.Map<IEnumerable<TResponse>>(data),
+                Page = page,
+                PageSize = pageSize,
+                PageCount = pageCount
+            };
+        }
 
         public virtual async Task<bool> Delete(DeleteRequestViewModel deleteRequest)
         {
@@ -121,7 +152,27 @@ namespace CoreArk.Packages.Services
         {
         }
 
-        protected virtual IQueryable<TEntity> GetQueryContext(IQueryable<TEntity> query)
+        protected virtual IQueryable<TEntity> FilterQuery(IQueryable<TEntity> query)
+        {
+            return query;
+        }
+
+        protected virtual IQueryable<TEntity> AddIncludes(IQueryable<TEntity> query)
+        {
+            return query;
+        }
+
+        protected virtual IQueryable<TEntity> AddByIdIncludes(IQueryable<TEntity> query)
+        {
+            return query;
+        }
+        
+        protected virtual IQueryable<TEntity> AddSearch(IQueryable<TEntity> query, string search)
+        {
+            return query;
+        }
+
+        protected virtual IQueryable<TEntity> AddPaginatedIncludes(IQueryable<TEntity> query)
         {
             return query;
         }
